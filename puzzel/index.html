@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Climate change</title>
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+</head>
+<body>
+   <img id="climate" src="img/climate.jpg" alt="climate">
+
+   <div class="container">
+ 
+        <div id="display">
+            00:00:00
+        </div>
+ 
+        <div class="buttons">
+            <button id="startStop" onclick="startStop()">Start</button> <button id="reset" onclick="reset()" >Reset</button>
+        </div>
+ 
+    </div>
+    <span id="counter">0</span>
+
+    <div id="puzzel">
+      <!-- een array van afbeeldingen -->
+        <div class="box" id="0"><img class="fotos" alt="1"></div>
+        <div class="box" id="1"><img class="fotos" alt="2"></div>
+        <div class="box" id="2"><img class="fotos" alt="3"></div>
+        <div class="box" id="3"><img class="fotos" alt="4"></div>
+        <div class="box" id="4"><img class="fotos" alt="5"></div>
+        <div class="box" id="5"><img class="fotos" alt="6"></div>
+        <div class="box" id="6"><img class="fotos" alt="7"></div>
+        <div class="box" id="7"><img class="fotos" alt="8"></div>
+        <div class="box" id="8"><img class="fotos" alt="9"></div>
+    </div>
+    
+    <p id="uitleg">
+      De bovenstaande foto weergeeft een mogelijk lot voor de mensheid,<br> 
+      met een mogelijkheid waarin wij onszelf opslokken in onze eigen hebzucht,<br>
+      en er niet meer word omgekeken naar dier en natuur.<br>
+      En een mogelijkheid waarin word erkend dat er een prioriteit<br>
+      moet zijn voor een goed welzijn van de volgende generatie mens en dier en natuur.
+    </p>
+
+    
+    <script>
+        var image = document.getElementsByClassName("fotos"); //alle img//
+        var box = document.getElementsByClassName("box");//class box//
+        image.draggable = true;//img zijn sleepbaar//
+        var source = "";
+        var nowImage;
+        var nowImageBox;
+        var thenImage;
+        var count = 0;
+        var imagesArray = [
+            "image0.jpg",
+            "image1.jpg",
+            "image2.jpg",
+            "image3.jpg",
+            "image4.jpg",
+            "image5.jpg",
+            "image6.jpg",
+            "image7.jpg",
+            "image8.jpg",
+        ]
+
+        var i;
+        for (i = 0; i < 9; i++) {
+            var random = imagesArray[Math.floor(Math.random() * imagesArray.length)];
+            console.log(random)
+            var el = document.getElementById(i);
+            el.innerHTML = '<img class="fotos" alt="" src=" ' + random + ' ">'; 
+            imagesArray = arrayRemove(imagesArray, random);
+        }
+
+        for(let i=0;i<image.length;i++){ //zodra i kleiner is dan de image.length word er steeds +1 erbij//
+            // source = "picture"+i+".jpg";//img + de length + .jpg vorm//
+            // image[i].setAttribute("src",source);//src img//
+            image[i].onmousedown = function(){
+                nowImage = this;
+                nowImageBox = this.parentNode;//Naar vader node van this zoeken//
+            }
+            box[i].ondragover = function(event){
+             event.preventDefault(); //Annuleer de standaard actie van het evenement.//
+            }
+            box[i].ondrop = function(event){
+                thenImage = box[i].childNodes[0];
+                box[i].appendChild(nowImage);
+                nowImageBox.appendChild(thenImage);
+                addCount();
+                start();
+                check();
+            }
+        }
+
+        function addCount(){
+            count++;
+            document.getElementById("counter").innerHTML = count;
+        }
+        
+        var array = [];
+
+        volgo();
+
+
+        function volgo(){
+            var boxes =  document.querySelectorAll('.fotos');
+            array = boxes;
+        }
+
+        function check(){
+            volgo();
+            var i;
+            var good = true;
+            for (i = 0; i < array.length; i++) {
+                if (!array[i].src.includes(i)){
+                    good = false;
+                } 
+            };
+            if (good){
+                console.log('Puzzle is good');
+                startStop();
+                var time = document.getElementById("display").innerHTML;
+                var steps = document.getElementById("counter").innerHTML;
+                setInterval(function(){ 
+                    alert('puzzle gehaald in ' + time + ' seconden en ' + steps + ' stappen');
+                    window.location = 'index.html';
+                }, 100);
+            }
+        }
+    
+        function arrayRemove(arr, value) {
+
+            return arr.filter(function(ele){
+                return ele != value;
+            });
+
+            }
+    </script>
+      <script>
+            //Define vars to hold time values
+            let seconds = 0;
+            let minutes = 0;
+            let hours = 0;
+             
+            //Define vars to hold "display" value
+            let displaySeconds = 0;
+            let displayMinutes = 0;
+            let displayHours = 0;
+             
+            //Define var to hold setInterval() function
+            let interval = null;
+             
+            //Define var to hold stopwatch status
+            let status = "stopped";
+             
+            //Stopwatch function (logic to determine when to increment next value, etc.)
+            function stopWatch(){
+             
+                seconds++;
+             
+                //Logic to determine when to increment next value
+                if(seconds / 60 === 1){
+                    seconds = 0;
+                    minutes++;
+             
+                    if(minutes / 60 === 1){
+                        minutes = 0;
+                        hours++;
+                    }
+             
+                }
+             
+                //If seconds/minutes/hours are only one digit, add a leading 0 to the value
+                if(seconds < 10){
+                    displaySeconds = "0" + seconds.toString();
+                }
+                else{
+                    displaySeconds = seconds;
+                }
+             
+                if(minutes < 10){
+                    displayMinutes = "0" + minutes.toString();
+                }
+                else{
+                    displayMinutes = minutes;
+                }
+             
+                if(hours < 10){
+                    displayHours = "0" + hours.toString();
+                }
+                else{
+                    displayHours = hours;
+                }
+             
+                //Display updated time values to user
+                document.getElementById("display").innerHTML = displayHours + ":" + displayMinutes + ":" + displaySeconds;
+             
+            }
+             
+             
+             
+            function startStop(){
+             
+                if(status === "stopped"){
+             
+                    //Start the stopwatch (by calling the setInterval() function)
+                    interval = window.setInterval(stopWatch, 1000);
+                    document.getElementById("startStop").innerHTML = "Stop";
+                    status = "started";
+             
+                }
+                else{
+             
+                    window.clearInterval(interval);
+                    document.getElementById("startStop").innerHTML = "Start";
+                    status = "stopped";
+             
+                }
+             
+            }
+
+            function start(){
+             
+                if(status === "stopped"){
+            
+                    //Start the stopwatch (by calling the setInterval() function)
+                    interval = window.setInterval(stopWatch, 1000);
+                    document.getElementById("startStop").innerHTML = "Stop";
+                    status = "started";
+            
+                }
+          
+            }
+             
+            //Function to reset the stopwatch
+            function reset(){
+             
+                window.clearInterval(interval);
+                seconds = 0;
+                minutes = 0;
+                hours = 0;
+                document.getElementById("display").innerHTML = "00:00:00";
+                document.getElementById("startStop").innerHTML = "Start";
+                location.reload();
+            }
+            </script>
+
+</body>
+</html>
